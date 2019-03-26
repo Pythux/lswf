@@ -9,12 +9,23 @@ sys.path.append(os.path.join(os.environ['HOME'], 'dev/library/py-lib'))
 from tools import to_absolute_path, sql_sqlite, err_print  # noqa: E402
 
 
+test_disk_dir = '/tmp/test_lswf/on_disk'
+test_ram_dir = '/tmp/test_lswf/on_ram'
+
+
 # ! loading config
 with open('config.json') as conf:
     conf = json.loads(conf.read())
     ram_dir = to_absolute_path(conf['ram_directory'])
     db_name = conf['db_name']
-    data_store_on_disk = to_absolute_path(conf['data_store_on_disk'])
+    disk_dir = to_absolute_path(conf['data_store_on_disk'])
+    if hasattr(sys, '_called_from_test'):
+        disk_dir = test_disk_dir
+        ram_dir = test_ram_dir
+
+
+def sql(req, *params):
+    return sql_sqlite(os.path.join(ram_dir, db_name), req, *params)
 
 
 def create_db():
@@ -59,21 +70,19 @@ def create_db():
             symlink_to TEXT)
             ''']
 
-    def sql(req, *params):
-        sql_sqlite(req, os.path.join(data_store_on_disk, db_name), *params)
-
     for table in create_tables:
-        sql(table)
-    sql('insert into too_big_directory(path) values (?)', '/')
+        sql_sqlite(os.path.join(disk_dir, db_name), table)
+    sql_sqlite(os.path.join(disk_dir, db_name),
+               'insert into too_big_directory(path) values (?)', '/')
 
 
 def create_app_dir():
-    os.makedirs(os.path.join(data_store_on_disk, 'ram_save'))
+    os.makedirs(os.path.join(disk_dir, 'ram_save'))
     create_db()
 
 
 def init_if_needed():
-    if os.path.isfile(os.path.join(data_store_on_disk, db_name)):
+    if os.path.isfile(os.path.join(disk_dir, db_name)):
         pass
     else:
         create_app_dir()
@@ -81,11 +90,11 @@ def init_if_needed():
         pass
     else:
         try:
-            copytree(data_store_on_disk, ram_dir)
+            copytree(disk_dir, ram_dir)
         except FileExistsError:
             if os.listdir(ram_dir) == []:
-                os.unlink(ram_dir)
-                copytree(data_store_on_disk, ram_dir)
+                os.rmdir(ram_dir)
+                copytree(disk_dir, ram_dir)
             else:
                 err_print('{} is not empty, but {}'.format(ram_dir, db_name) +
                           ' is not inside this directory')

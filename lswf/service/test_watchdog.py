@@ -1,4 +1,4 @@
-#!/home/pythux/dev/venv/bin/python
+#!/usr/bin/python3
 
 import sys
 import time

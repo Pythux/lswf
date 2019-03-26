@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import json
 import re
 
-from init import ram_dir, db_name
+from init import sql
 
 sys.path.append(os.path.join(os.environ['HOME'], 'dev/library/py-lib'))
 from shell import sh  # noqa: E402
@@ -23,10 +23,6 @@ from tools import sql_sqlite, err_print  # noqa: E402
 #         print(os.path.join(root, directory))
 #     for filename in filenames:
 #         print(os.path.join(root, filename))
-
-
-def sql(req, *params):
-    sql_sqlite(req, os.path.join(ram_dir, db_name), *params)
 
 
 def scan(path, timeout, change_since_mn):
