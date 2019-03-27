@@ -1,11 +1,17 @@
 
 from abc import ABCMeta, abstractmethod
+from lswf.data.database.sql_helper import SQLHelper
 
 
-class SQL(metaclass=ABCMeta):
+class SQL(SQLHelper, metaclass=ABCMeta):
     @property
     @abstractmethod
     def table():
+        raise NotImplementedError
+
+    @property
+    @abstractmethod
+    def key_name():
         raise NotImplementedError
 
     @staticmethod
@@ -16,10 +22,6 @@ class SQL(metaclass=ABCMeta):
     @staticmethod
     @abstractmethod
     def read(obj):
-        """
-            take one unique property or the key id
-            return None if not found
-        """
         raise NotImplementedError
 
     @staticmethod

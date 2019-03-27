@@ -7,34 +7,22 @@ class SQL(lswf.data.database.interface.SQL):
     def table(self):
         return 'file'
 
+    @property
+    def key_name(self):
+        return 'file_id'
+
     def create(self, obj):
-        key = sql(
-            'insert into {}({}, {}) values (?, ?)'
-            .format(self.table, 'path', 'last_update'),
-            obj.path, obj.last_update)
-        obj.key = key
+        obj.key = self._create(
+            ['path', 'last_update'], [obj.path, obj.last_update])
 
     def read(self, obj):
-        where = 'path', obj.path
-        if obj.key:
-            where = ('file_id', obj.key)
-        r = sql('select file_id, last_update' +
-                ' from {} where {} = ?'
-                .format(self.table, where[0]),
-                where[1])
-        if r == []:
-            pass
-        elif len(r) != 1:
-            raise ValueError('read must return a single element')
-        else:
-            obj.key, obj.last_update = r[0]
+        r = self._read(obj.key, 'path', obj.path)
+        if r:
+            obj.key, obj.last_update, _ = r
 
     def update(self, obj):
-        if not obj.key:
-            raise ValueError("can't update without the obj key")
-        sql('update {} set path= ?, last_update=? where file_id=?'
-            .format(self.table),
-            obj.path, obj.last_update, obj.key)
+        self._update(
+            obj.key, ['path', 'last_update'], [obj.path, obj.last_update])
 
     def delete(self, obj):
         if not obj.key:
