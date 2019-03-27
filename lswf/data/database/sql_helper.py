@@ -41,3 +41,11 @@ class SQLHelper:
         sql('update {} set {} where {} = ?'
             .format(self.table, values_names, self.key_name),
             *values, key)
+
+    def _delete(self, obj):
+        if not obj.key:
+            raise ValueError("can't delete without the obj key")
+        sql('delete from {} where {} = ?'
+            .format(self.table, self.key_name),
+            obj.key)
+        obj.key = None

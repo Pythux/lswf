@@ -23,10 +23,3 @@ class SQL(lswf.data.database.interface.SQL):
     def update(self, obj):
         self._update(
             obj.key, ['path', 'last_update'], [obj.path, obj.last_update])
-
-    def delete(self, obj):
-        if not obj.key:
-            raise ValueError("can't delete without the obj key")
-        sql('delete from {} where file_id=?'
-            .format(self.table), obj.key)
-        obj.key = None

@@ -29,10 +29,8 @@ class SQL(SQLHelper, metaclass=ABCMeta):
     def update(obj):
         raise NotImplementedError
 
-    @staticmethod
-    @abstractmethod
-    def delete(obj):
-        raise NotImplementedError
+    def delete(self, obj):
+        self._delete(obj)
 
     def update_or_create(self, obj):
         if not obj.key:
