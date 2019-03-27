@@ -8,9 +8,9 @@ setup(
     # author_email='',
     packages=['lswf'],  # same as name
     # install_requires=[],  # external packages as dependencies
-    scripts=[
-        'lswf/lswf',
-        ]
+    # scripts=[
+    #     'lswf/app',
+    #     ]
 )
 
 # install in dev mode (link to the current folder)

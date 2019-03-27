@@ -1,14 +1,14 @@
 from lswf.service.init import sql
-import lswf.data.entity.file
-import lswf.data.database.entity.file
+import lswf.models.file
+import lswf.data_access.file_DAO
 
 __all__ = ["sql", "db", "File", ]
-File = lswf.data.entity.file.File
+File = lswf.models.file.File
 
 
 class SQL:
     dict_entity = {
-        File.__name__: lswf.data.database.entity.file.SQL(),
+        File.__name__: lswf.data_access.file_DAO.SQL(),
     }
 
     def __getattr__(self, name):

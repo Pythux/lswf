@@ -1,6 +1,6 @@
 
 from abc import ABCMeta, abstractmethod
-from lswf.data.database.sql_helper import SQLHelper
+from lswf.database.sql_helper import SQLHelper
 
 
 class SQL(SQLHelper, metaclass=ABCMeta):

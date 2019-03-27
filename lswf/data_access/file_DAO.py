@@ -1,7 +1,7 @@
-import lswf.data.database.interface
+import lswf.database.interface
 
 
-class SQL(lswf.data.database.interface.SQL):
+class SQL(lswf.database.interface.SQL):
     @property
     def table(self):
         return 'file'

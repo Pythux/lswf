@@ -1,7 +1,7 @@
 import pytest
 from datetime import datetime
 
-from lswf.data.database.sql import db, sql, File
+from lswf.database.sql import db, sql, File
 
 
 def test_file():
