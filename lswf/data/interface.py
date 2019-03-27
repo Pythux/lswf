@@ -32,7 +32,9 @@ class SQLService(metaclass=ABCMeta):
     def delete(obj):
         raise NotImplementedError
 
-    def create_or_create(self, obj):
+    def update_or_create(self, obj):
+        if not obj.key:
+            self.read(obj)
         if obj.key:
             self.update(obj)
         else:

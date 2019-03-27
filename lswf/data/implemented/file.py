@@ -38,10 +38,11 @@ class SQL_Service(lswf.data.interface.SQLService):
                 .format(self.table, where[0]),
                 where[1])
         if r == []:
-            return None
-        if len(r) != 1:
+            pass
+        elif len(r) != 1:
             raise ValueError('read must return a single element')
-        obj.key, obj.last_update = r[0]
+        else:
+            obj.key, obj.last_update = r[0]
 
     def update(self, obj):
         if not obj.key:

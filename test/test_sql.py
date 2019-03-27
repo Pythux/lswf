@@ -29,8 +29,11 @@ def test_file():
     assert f.key is None
     assert sql('select * from file') == []
 
-    db.create_or_create(f)
-    db.create_or_create(f)
+    db.update_or_create(f)
+    db.update_or_create(f)
     f.path = 'pa'
-    db.create_or_create(f)
+    db.update_or_create(f)
     assert f.path == 'pa'
+    f.key = None
+    db.update_or_create(f)
+    assert len(sql('select * from file')) == 1
