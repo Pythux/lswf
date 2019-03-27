@@ -1,4 +1,3 @@
-from lswf.service.init import sql
 import lswf.data.database.interface
 
 
