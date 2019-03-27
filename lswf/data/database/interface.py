@@ -2,7 +2,7 @@
 from abc import ABCMeta, abstractmethod
 
 
-class SQLService(metaclass=ABCMeta):
+class SQL(metaclass=ABCMeta):
     @property
     @abstractmethod
     def table():

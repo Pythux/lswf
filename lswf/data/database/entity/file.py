@@ -1,25 +1,8 @@
-import pprint
-
 from lswf.service.init import sql
-import lswf.data.interface
+import lswf.data.database.interface
 
 
-class File:
-    def __init__(self, path, last_update, key=None):
-        self.path = path
-        self.last_update = last_update
-        self.key = key
-
-    def __repr__(self):
-        return pprint.pformat({
-            'type': self.__class__.__name__,
-            'key': self.key,
-            'path': self.path,
-            'last_update': self.last_update,
-        })
-
-
-class SQL_Service(lswf.data.interface.SQLService):
+class SQL(lswf.data.database.interface.SQL):
     @property
     def table(self):
         return 'file'
@@ -32,7 +15,9 @@ class SQL_Service(lswf.data.interface.SQLService):
         obj.key = key
 
     def read(self, obj):
-        where = self.get_where(obj)
+        where = 'path', obj.path
+        if obj.key:
+            where = ('file_id', obj.key)
         r = sql('select file_id, last_update' +
                 ' from {} where {} = ?'
                 .format(self.table, where[0]),
@@ -57,10 +42,3 @@ class SQL_Service(lswf.data.interface.SQLService):
         sql('delete from {} where file_id=?'
             .format(self.table), obj.key)
         obj.key = None
-
-    @staticmethod
-    def get_where(obj):
-        where = 'path', obj.path
-        if obj.key:
-            where = ('file_id', obj.key)
-        return where
