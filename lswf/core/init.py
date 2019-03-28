@@ -1,12 +1,15 @@
-#!/usr/bin/python3
 
 import os
 import sys
 import json
 from shutil import copytree
+from database.connection import sql_sqlite
 
-sys.path.append(os.path.join(os.environ['HOME'], 'dev/library/py-lib'))
-from tools import to_absolute_path, sql_sqlite, err_print  # noqa: E402
+
+def to_absolute_path(path):
+    if path[0] == '~':
+        path = path[2:]
+    return os.path.join(os.environ['HOME'], path)
 
 
 test_disk_dir = '/tmp/test_lswf/on_disk'
