@@ -2,10 +2,10 @@ import pprint
 
 
 class File:
-    def __init__(self, path, last_update, key=None):
+    def __init__(self, path, last_update=None, key=None):
+        self.key = key
         self.path = path
         self.last_update = last_update
-        self.key = key
 
     def __repr__(self):
         return pprint.pformat({

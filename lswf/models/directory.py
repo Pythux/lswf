@@ -2,10 +2,10 @@ import pprint
 
 
 class Directory:
-    def __init__(self, path, last_update, listdir, key=None):
+    def __init__(self, path, last_update=None, listdir=None, key=None):
+        self.key = key
         self.path = path
         self.last_update = last_update
-        self.key = key
         self.listdir = listdir
 
     def __repr__(self):

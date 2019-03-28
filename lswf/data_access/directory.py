@@ -1,7 +1,8 @@
+import json
 from database import InterfaceCRUD
 
 
-class SQL(InterfaceCRUD):
+class Directory(InterfaceCRUD):
     @property
     def table(self):
         return 'directory'
@@ -12,9 +13,13 @@ class SQL(InterfaceCRUD):
 
     def get_params_and_values(self, obj):
         return (['path', 'last_update', 'listdir'],
-                [obj.path, obj.last_update, obj.listdir])
+                [obj.path, obj.last_update, json.dumps(obj.listdir)])
 
-    def read(self, obj):
-        r = self._read(obj.key, 'path', obj.path)
-        if r:
-            obj.key, obj.last_update, _, obj.listdir = r
+    @staticmethod
+    def get_unique(obj):
+        return (['path'], [obj.path])
+
+    @staticmethod
+    def set_obj(obj, selected):
+        obj.key, obj.last_update, obj.path, obj.listdir = selected
+        obj.listdir = json.loads(obj.listdir)

@@ -43,9 +43,9 @@ def create_db():
             last_update timestamp NOT NULL, path TEXT UNIQUE NOT NULL)
         ''', '''
         create table directory_update_frequence
-            (id INTEGER PRIMARY KEY NOT NULL,
-            directory_id INTEGER,
+            (directory_id INTEGER NOT NULL,
             update_time timestamp NOT NULL,
+            CONSTRAINT UC_key UNIQUE (directory_id, update_time)
             CONSTRAINT fk_directory
                 FOREIGN KEY (directory_id)
                 REFERENCES directory(directory_id)
@@ -53,9 +53,9 @@ def create_db():
             )
         ''', '''
         create table file_update_frequence
-            (id INTEGER PRIMARY KEY NOT NULL,
-            file_id INTEGER,
+            (file_id INTEGER NOT NULL,
             update_time timestamp NOT NULL,
+            CONSTRAINT UC_key UNIQUE (file_id, update_time)
             CONSTRAINT fk_file
                 FOREIGN KEY (file_id)
                 REFERENCES file(file_id)
@@ -66,8 +66,8 @@ def create_db():
             (id INTEGER PRIMARY KEY NOT NULL,
             path TEXT UNIQUE NOT NULL)
         ''', '''
-        create table symlinked_path
-            (id INTEGER PRIMARY KEY NOT NULL,
+        create table symlink
+            (symlink_id INTEGER PRIMARY KEY NOT NULL,
             is_dir boolean NOT NULL,
             path TEXT UNIQUE NOT NULL,
             symlink_to TEXT)
@@ -99,8 +99,10 @@ def init_if_needed():
                 os.rmdir(ram_dir)
                 copytree(disk_dir, ram_dir)
             else:
-                err_print('{} is not empty, but {}'.format(ram_dir, db_name) +
-                          ' is not inside this directory')
+                SystemError(
+                    '{} is not empty, but {}'.format(ram_dir, db_name) +
+                    ' is not inside this directory'
+                )
 
 
 if __name__ == "__main__":

@@ -1,18 +1,18 @@
 from database import InterfaceCRUD
 
 
-class File(InterfaceCRUD):
+class SymLink(InterfaceCRUD):
     @property
     def table(self):
-        return 'file'
+        return 'symlink'
 
     @property
     def key_name(self):
-        return 'file_id'
+        return 'symlink_id'
 
     def get_params_and_values(self, obj):
-        return (['path', 'last_update'],
-                [obj.path, obj.last_update])
+        return (['is_dir', 'path', 'symlink_to'],
+                [obj.is_dir, obj.path, obj.symlink_to])
 
     @staticmethod
     def get_unique(obj):
@@ -20,4 +20,4 @@ class File(InterfaceCRUD):
 
     @staticmethod
     def set_obj(obj, selected):
-        obj.key, obj.last_update, obj.path = selected
+        obj.key, obj.is_dir, obj.path, obj.symlink_to = selected
