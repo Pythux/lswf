@@ -5,6 +5,10 @@ from lswf.core.init import sql
 from lswf.database import db, File, Directory, SymLink
 
 
+from lswf.core.init import init_if_needed
+init_if_needed()
+
+
 def test_sym():
     sql('delete from symlink')
     o = SymLink(True, '/to/the', '/tmp/data/')

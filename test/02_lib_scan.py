@@ -5,20 +5,24 @@ import sqlite3
 from lswf.core.init import sql
 from lswf.database import db, File, Directory, UpdateFrequence
 
+# test import
+from lswf.core.lib.scan import update_change, check_file_dirs
+
+# function scan to use
 from lswf.core.lib import scan
 
 
 date = datetime(2019, 3, 28)
 
 
-def update_change(o, select_freq):
+def check_update_change(o, select_freq):
     db.create(o)
-    scan.update_change(o)
+    update_change(o)
     assert select_freq() == []
     db.delete(o)
-    scan.update_change(o)
+    update_change(o)
     assert select_freq() == [(1, date)]
-    scan.update_change(o)
+    update_change(o)
     assert select_freq() == [(1, date)]
     with pytest.raises(sqlite3.IntegrityError) as e_info:
         db.create(UpdateFrequence(o))
@@ -32,7 +36,7 @@ def test_update_change_file():
 
     def select_freq():
         return sql('select * from file_update_frequence')
-    update_change(o, select_freq)
+    check_update_change(o, select_freq)
 
 
 def test_update_change_directory():
@@ -41,4 +45,17 @@ def test_update_change_directory():
 
     def select_freq():
         return sql('select * from directory_update_frequence')
-    update_change(o, select_freq)
+    check_update_change(o, select_freq)
+
+
+def test_scan():
+    scan_result = ([
+        '/abs_path/dev/testsym',
+        '/abs_path/dev/testsym/yo',
+        '/abs_path/dev/testsym/dir',
+        '/abs_path/dev/testsym/dir/in_dir_2',
+        '/abs_path/dev/testsym/dir/in_dir',
+        '/abs_path/dev/testsym/dir/new_dir'],
+        ['find: ‘/root’: Denied!', ''])
+
+    check_file_dirs(*scan_result)

@@ -3,13 +3,9 @@ import os
 import sys
 import json
 from shutil import copytree
+
+from tools.path import to_absolute_path
 from database.connection import sql_sqlite
-
-
-def to_absolute_path(path):
-    if path[0] == '~':
-        path = path[2:]
-    return os.path.join(os.environ['HOME'], path)
 
 
 test_disk_dir = '/tmp/test_lswf/on_disk'

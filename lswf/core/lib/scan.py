@@ -1,13 +1,12 @@
 import os
-import sys
 from datetime import datetime
 import re
 
+from tools.shell import sh
+
+from lswf.core.init import to_absolute_path
 from lswf.database import db, File, Directory, UpdateFrequence
 
-
-sys.path.append(os.path.join(os.environ['HOME'], 'dev/library/py-lib'))
-from shell import sh  # noqa: E402
 
 """
 find . -type f -mtime -1 -printf '%h\n' | sort | uniq
@@ -29,6 +28,7 @@ def scan(path, timeout, change_since_mn):
     """path should be absolute,
         scan everything inside the path
     """
+    path = to_absolute_path(path)
     find = 'find "{search_start}" -mmin -{mn}' \
         .format(search_start=path, mn=change_since_mn)
     outs, errs = sh(find, timeout=timeout)
@@ -58,7 +58,7 @@ def check_file_dirs(file_dirs, errs=None):
     for err in errs:
         if err == '':
             pass
-        elif re.match(r"find: (.)+: Permission non accordée", err):
+        elif re.match(r"find: (.)+: ", err):
             pass
         else:
             raise ValueError('unhandled ! “{}”'.format(repr(err)))
