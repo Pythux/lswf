@@ -6,10 +6,10 @@ from lswf.core.init import sql
 from lswf.database import db, File, Directory, UpdateFrequence
 
 # test import
-from lswf.core.lib.scan import update_change, check_file_dirs
+from lswf.lib.scan import update_change, check_file_dirs
 
 # function scan to use
-from lswf.core.lib import scan
+from lswf.lib import scan
 
 
 date = datetime(2019, 3, 28)

@@ -1,0 +1,79 @@
+#!/usr/bin/python3
+
+import os
+from shutil import copy2, copytree, move
+
+from lswf.core.init import disk_dir, ram_dir
+
+
+def create_needed_symlink():
+    li_path_needing_symlink = sql(
+        'select id, path, is_dir from symlinked_path where symlink_to is null'
+    )
+    for id_, path_needing, is_dir in li_path_needing_symlink:
+        path, name = os.path.split(path_needing)
+        # new_name = name + ' ' + str(id_)
+        new_name = name
+        path_on_disk = os.path.join(disk_dir, new_name)
+        path_on_ram = os.path.join(ram_dir, new_name)
+        move(path_needing, path_on_disk)
+        if is_dir:
+            copytree(path_on_disk, path_on_ram)
+        else:
+            copy2(path_on_disk, path_on_ram)
+
+        os.symlink(path_on_ram, path_needing)
+        sql('update symlinked_path set symlink_to = ? where id = ?',
+            new_name, id_)
+
+
+def delete_symlink(path, symlink_to):
+    if symlink_to is not None:
+        if os.path.islink(path):
+            os.unlink(path)
+            move(os.path.join(ram_dir, symlink_to), path)
+            os.unlink(os.path.join(disk_dir, symlink_to))
+        else:
+            err_print('delete_symlink: path should be ' +
+                      'a symlink, please, check path: {}'
+                      .format(path))
+            sys.exit(1)
+    sql('delete from symlinked_path where path = ?', path)
+
+
+def check_and_delete_symfile_in_symdir():
+    li_dir = list(map(lambda tuple: tuple[0], sql(
+        'select path from symlinked_path where is_dir = 1')))
+    li_file = sql(
+        'select path, symlink_to from symlinked_path where is_dir = 0')
+
+    for path, symlink_to in li_file:
+        splited_path = path
+        while True:
+            splited_path = os.path.split(splited_path)[0]
+            if splited_path == '/':
+                break
+            if splited_path in li_dir:
+                delete_symlink(path, symlink_to)
+                break
+
+
+def main():
+    frequency = 1
+    save_dir_path(frequency)
+    save_file_path(frequency)
+    check_and_delete_symfile_in_symdir()
+    create_needed_symlink()
+
+
+if __name__ == "__main__":
+    doc = """
+        Detect the file and folder to cache, based on frequency of Write
+    """
+    import argparse
+    parser = argparse.ArgumentParser(
+        description=doc, formatter_class=argparse.RawTextHelpFormatter)
+
+    args = parser.parse_args()
+    check_init_done()
+    main()
