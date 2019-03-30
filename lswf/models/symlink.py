@@ -16,3 +16,7 @@ class SymLink:
             'path': self.path,
             'symlink_to': self.symlink_to,
         })
+
+    @staticmethod
+    def from_select_stars(li_t):
+        return list(map(lambda t: SymLink(*t[1:], t[0]), li_t))

@@ -15,12 +15,15 @@ test_ram_dir = '/tmp/test_lswf/on_ram'
 # ! loading config
 with open('config.json') as conf:
     conf = json.loads(conf.read())
-    ram_dir = to_absolute_path(conf['ram_directory'])
     db_name = conf['db_name']
     disk_dir = to_absolute_path(conf['data_store_on_disk'])
+    ram_dir = to_absolute_path(conf['ram_directory'])
     if hasattr(sys, '_called_from_test'):
         disk_dir = test_disk_dir
         ram_dir = test_ram_dir
+
+    disk_data = os.path.join(disk_dir, 'data')
+    ram_data = os.path.join(ram_dir, 'data')
 
 
 def sql(req, *params):
@@ -76,7 +79,7 @@ def create_db():
 
 
 def create_app_dir():
-    os.makedirs(os.path.join(disk_dir, 'ram_save'))
+    os.makedirs(disk_data)
     create_db()
 
 
