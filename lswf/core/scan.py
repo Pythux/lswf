@@ -7,7 +7,7 @@ from datetime import datetime
 from tools.shell import TimeoutExpired
 from tools.pip_my_term import WeelEWonka
 
-from tools.path.scan import scan_file_dir
+from tools.path.scan import scan_file_dir, check_file_dirs
 
 from lswf.core.init import init_if_needed
 from lswf.database import db, TooBig, File, Directory, UpdateFrequence
