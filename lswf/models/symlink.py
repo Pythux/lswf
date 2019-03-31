@@ -2,7 +2,7 @@ import pprint
 
 
 class SymLink:
-    def __init__(self, is_dir, path, symlink_to, key=None):
+    def __init__(self, is_dir, path, symlink_to=None, key=None):
         self.key = key
         self.is_dir = is_dir
         self.path = path

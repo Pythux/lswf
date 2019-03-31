@@ -70,7 +70,7 @@ def create_db():
             is_dir boolean NOT NULL,
             path TEXT UNIQUE NOT NULL,
             symlink_to TEXT)
-            ''']
+        ''']
 
     for table in create_tables:
         sql_sqlite(os.path.join(disk_dir, db_name), table)

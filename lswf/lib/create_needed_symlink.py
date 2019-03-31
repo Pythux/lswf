@@ -65,3 +65,7 @@ def delete_sym_in_symdir():
             if splited_path in li_path_dir:
                 delete_symlink(symlink)
                 break
+
+
+if __name__ == "__main__":
+    create_needed_symlink()

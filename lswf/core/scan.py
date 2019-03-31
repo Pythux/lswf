@@ -2,13 +2,49 @@
 
 import os
 import time
+from datetime import datetime
 
 from tools.shell import TimeoutExpired
 from tools.pip_my_term import WeelEWonka
 
+from tools.path.scan import scan_file_dir
+
 from lswf.core.init import init_if_needed
-from lswf.lib import scan, check_file_dirs
-from lswf.database import db, TooBig
+from lswf.database import db, TooBig, File, Directory, UpdateFrequence
+
+
+def update_change(obj):
+    update_or_create = False
+    new_date = obj.last_update
+    if db.read(obj):
+        old_date = obj.last_update
+        if old_date < new_date:
+            update_or_create = True
+    else:
+        update_or_create = True
+
+    if update_or_create:
+        obj.last_update = new_date
+        db.update_or_create(obj)
+        db.create(UpdateFrequence(obj))
+
+
+def scan(path, timeout, change_since_mn):
+    def fn_file(path):
+        o = File(path)
+        fn_both(o)
+
+    def fn_dir(path):
+        o = Directory(path)
+        o.listdir = os.listdir(path)
+        fn_both(o)
+
+    def fn_both(o):
+        o.last_update = datetime.fromtimestamp(
+            os.path.getmtime(o.path)).replace(microsecond=0)
+        update_change(o)
+
+    scan_file_dir(path, timeout, change_since_mn, fn_file, fn_dir)
 
 
 def full_scan(path, const_var):
@@ -98,8 +134,8 @@ if __name__ == "__main__":
 
     mode = {
         'fast': [5, 0],
-        'medium': [3, 1],
-        'slow': [2, 10],
+        'medium': [3, 2],
+        'slow': [2, 8],
     }
     try:
         timeout, sleep_ratio = mode[args.speed]
