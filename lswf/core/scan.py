@@ -7,7 +7,7 @@ from datetime import datetime
 from tools.shell import TimeoutExpired
 from tools.pip_my_term import WeelEWonka
 
-from tools.path.scan import scan_file_dir, check_file_dirs
+from tools.path.scan import scan_file_dir
 
 from lswf.core.init import init_if_needed
 from lswf.database import db, TooBig, File, Directory, UpdateFrequence
@@ -29,21 +29,24 @@ def update_change(obj):
         db.create(UpdateFrequence(obj))
 
 
+def fn_file(path):
+    o = File(path)
+    fn_both(o)
+
+
+def fn_dir(path):
+    o = Directory(path)
+    o.listdir = os.listdir(path)
+    fn_both(o)
+
+
+def fn_both(o):
+    o.last_update = datetime.fromtimestamp(
+        os.path.getmtime(o.path)).replace(microsecond=0)
+    update_change(o)
+
+
 def scan(path, timeout, change_since_mn):
-    def fn_file(path):
-        o = File(path)
-        fn_both(o)
-
-    def fn_dir(path):
-        o = Directory(path)
-        o.listdir = os.listdir(path)
-        fn_both(o)
-
-    def fn_both(o):
-        o.last_update = datetime.fromtimestamp(
-            os.path.getmtime(o.path)).replace(microsecond=0)
-        update_change(o)
-
     scan_file_dir(path, timeout, change_since_mn, fn_file, fn_dir)
 
 
@@ -80,7 +83,7 @@ def in_too_big(too_big, const_var):
 def try_scan(path, const_var):
     *_, change_since = const_var
     if os.path.isfile(path):
-        check_file_dirs([path])
+        fn_file(path)
     else:
         try:
             scan(path, timeout, change_since)

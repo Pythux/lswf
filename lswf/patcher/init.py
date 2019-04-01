@@ -24,30 +24,24 @@ with open('config.json') as conf:
 
 
 def sql(req, *params):
-    return sql_sqlite(os.path.join(disk_dir, db_name), req, *params)
+    return sql_sqlite(os.path.join(ram_dir, db_name), req, *params)
 
 
 def create_table():
     create_tables = ['''
-        CREATE TABLE patcher_last_update
-            (patcher_last_update timestamp UNIQUE NOT NULL,
-            files_last_update timestamp NOT NULL)
-        ''', '''
-        CREATE TABLE patcher_tmp_src_new
+        CREATE TABLE patcher_last_save
             (id INTEGER PRIMARY KEY NOT NULL,
-            path TEXT UNIQUE NOT NULL,
-            process TEXT UNIQUE NOT NULL)
+            last_save timestamp UNIQUE NOT NULL)
         ''']
 
     for table in create_tables:
-        sql_sqlite(os.path.join(disk_dir, db_name), table)
+        sql(table)
 
 
 def try_create_table():
-    is_table_exist = sql_sqlite(
-        os.path.join(disk_dir, db_name),
+    is_table_exist = sql(
         "SELECT name FROM sqlite_master" +
-        " WHERE type='table' AND name='patcher_last_update';")
+        " WHERE type='table' AND name='patcher_last_save';")
     if is_table_exist == []:
         create_table()
 

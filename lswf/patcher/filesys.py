@@ -17,16 +17,26 @@ def get_binary_file_content(path):
 
 
 def create_binary_file(path, content):
+    dirs, _ = os.path.split(path)
+    if not os.path.exists(dirs):
+        os.makedirs(dirs)
+
     with open(path, 'wb') as f:
         f.write(content)
 
 
 def copy_data_in_src(abs_path):
-    path_src = os.path.join(disk_data, 'src')
+    relative_path = get_relative_path(ram_data, abs_path)
+    relavive_path_to_make, name_to_copy = os.path.split(relative_path)
+    path_src_to_make = pj(disk_data, 'src', relavive_path_to_make)
+    path_dest = pj(path_src_to_make, name_to_copy)
+    if not os.path.exists(path_src_to_make):
+        os.makedirs(path_src_to_make)
+
     if os.path.isdir(abs_path):
-        shutil.copytree(abs_path, path_src)
+        shutil.copytree(abs_path, path_dest)
     else:
-        shutil.copy2(abs_path, path_src)
+        shutil.copy2(abs_path, path_dest)
 
 
 def delete_old_and_mv_new_to_src():
@@ -40,14 +50,17 @@ def delete_old_and_mv_new_to_src():
             move the file to "src"
             delete emptied dir in src_new
     """
-    src_new = os.path.join(disk_data, 'src_new')
+    src_new = pj(disk_data, 'src_new')
     walk = os.walk(src_new, topdown=False)
     for dirpath, dirnames, filenames in walk:
         for file_name in filenames:
             relative_path = get_relative_path(src_new, pj(dirpath, file_name))
+            print('before del' + relative_path)
             delete_olds(relative_path)
+            print('del' + relative_path)
             os.rename(pj(disk_data, 'src_new', relative_path),
                       pj(disk_data, 'src', relative_path))
+            print('mv in src' + relative_path)
 
         for emptied_dir in dirnames:
             os.rmdir(pj(dirpath, emptied_dir))
@@ -55,7 +68,7 @@ def delete_old_and_mv_new_to_src():
 
 def delete_olds(relative_path):
     def try_delete(path, delete_fn):
-        if os.exists(path):
+        if os.path.exists(path):
             delete_fn(path)
             return True
         return False
