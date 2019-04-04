@@ -1,4 +1,4 @@
-from database import InterfaceCRUD
+from CRUD_vanilla import InterfaceCRUD
 
 
 class SymLink(InterfaceCRUD):

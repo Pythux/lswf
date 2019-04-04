@@ -1,4 +1,4 @@
-from database import DataBase
+from CRUD_vanilla import DataBase
 
 from lswf.core.init import sql
 

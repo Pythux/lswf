@@ -67,8 +67,7 @@ def full_scan(path, const_var):
         try_scan(path, const_var)
 
     stop = time.time()
-    time.sleep((stop - start) * sleep_ratio)
-    # time.sleep(1)
+    time.sleep(max(0, (stop - start) * sleep_ratio))
 
 
 def in_too_big(too_big, const_var):
@@ -81,7 +80,7 @@ def in_too_big(too_big, const_var):
 
 
 def try_scan(path, const_var):
-    *_, change_since = const_var
+    _, timeout, *_, change_since = const_var
     if os.path.isfile(path):
         fn_file(path)
     else:
@@ -106,46 +105,9 @@ def main(path, timeout, sleep_ratio, avoid_paths):
                          avoid_paths, change_since))
         stop = time.time()
         delta = stop - start
+        weel_e_wonka.msg_clear()
         print('full scan in {}s'.format('%.1f' % delta))
         scan_number += 1
         sleep = min(50, scan_number * 2)
         print('wait before next full scan: {}s'.format('%.0f' % sleep))
         time.sleep(sleep)
-
-
-if __name__ == "__main__":
-    doc = """
-        Scan thought all directory, don't go above mount point nor symlink
-        research frequently create, update, delete in the filesystem
-        (frequente modification)
-    """
-    import argparse
-    parser = argparse.ArgumentParser(
-        description=doc, formatter_class=argparse.RawTextHelpFormatter)
-
-    parser.add_argument(
-        "--path",
-        help='define the path to scan, "/" is the default value',
-        default='/'
-        )
-    parser.add_argument(
-        "--speed",
-        help='fast, medium, slow',
-        default='medium',
-        )
-    args = parser.parse_args()
-
-    mode = {
-        'fast': [5, 0],
-        'medium': [3, 2],
-        'slow': [2, 8],
-    }
-    try:
-        timeout, sleep_ratio = mode[args.speed]
-    except KeyError:
-        raise SystemError(
-            'speed option: fast, medium, slow\n\t\t\t{} not reconized'
-            .format(args.speed))
-
-    avoid_paths = []
-    main(args.path, timeout, sleep_ratio, avoid_paths)

@@ -1,5 +1,5 @@
 import json
-from database import InterfaceCRUD
+from CRUD_vanilla import InterfaceCRUD
 
 
 class Directory(InterfaceCRUD):

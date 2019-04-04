@@ -1,36 +1,39 @@
 
 import os
 import sys
-import json
-from shutil import copytree
 
 from tools.path import to_absolute_path
-from database.connection import sql_sqlite
+from CRUD_vanilla.connection import sql_sqlite
+import patcher
 
 
 test_disk_dir = '/tmp/test_lswf/on_disk'
 test_ram_dir = '/tmp/test_lswf/on_ram'
 
 
-# ! loading config
-with open('config.json') as conf:
-    conf = json.loads(conf.read())
-    db_name = conf['db_name']
-    disk_dir = to_absolute_path(conf['data_store_on_disk'])
-    ram_dir = to_absolute_path(conf['ram_directory'])
-    if hasattr(sys, '_called_from_test'):
-        disk_dir = test_disk_dir
-        ram_dir = test_ram_dir
+conf = {
+    "ram_directory": "/tmp/lower_ssd_write_frequency",
+    "db_name": "sqlite.db",
+    "data_store_on_disk": "~/.config/lower_ssd_write_frequency"
+}
 
-    disk_data = os.path.join(disk_dir, 'data')
-    ram_data = os.path.join(ram_dir, 'data')
+
+# hanldle_conf:
+db_name = conf['db_name']
+disk_dir = to_absolute_path(conf['data_store_on_disk'])
+ram_dir = to_absolute_path(conf['ram_directory'])
+if hasattr(sys, '_called_from_test'):
+    disk_dir = test_disk_dir
+    ram_dir = test_ram_dir
+
+ram_data = os.path.join(ram_dir, 'data')
 
 
 def sql(req, *params):
     return sql_sqlite(os.path.join(ram_dir, db_name), req, *params)
 
 
-def create_db():
+def create_tables():
     create_tables = ['''
         CREATE TABLE directory
             (directory_id INTEGER PRIMARY KEY NOT NULL,
@@ -73,35 +76,28 @@ def create_db():
         ''']
 
     for table in create_tables:
-        sql_sqlite(os.path.join(disk_dir, db_name), table)
-    sql_sqlite(os.path.join(disk_dir, db_name),
-               'insert into too_big_directory(path) values (?)', '/')
+        sql(table)
+    sql('insert into too_big_directory(path) values (?)', '/')
 
 
-def create_app_dir():
-    os.makedirs(disk_data)
-    create_db()
+def try_create_table():
+    is_table_exist = sql(
+        "SELECT name FROM sqlite_master" +
+        " WHERE type='table' AND name='directory';")
+    if is_table_exist == []:
+        create_tables()
+
+
+def try_create_data():
+    if not os.path.exists(ram_data):
+        os.makedirs(ram_data)
 
 
 def init_if_needed():
-    if os.path.isfile(os.path.join(disk_dir, db_name)):
-        pass
-    else:
-        create_app_dir()
-    if os.path.isfile(os.path.join(ram_dir, db_name)):
-        pass
-    else:
-        try:
-            copytree(disk_dir, ram_dir)
-        except FileExistsError:
-            if os.listdir(ram_dir) == []:
-                os.rmdir(ram_dir)
-                copytree(disk_dir, ram_dir)
-            else:
-                SystemError(
-                    '{} is not empty, but {}'.format(ram_dir, db_name) +
-                    ' is not inside this directory'
-                )
+    if not os.path.isdir(ram_dir):
+        patcher.load(ram_dir, disk_dir)
+        try_create_table()
+        try_create_data()
 
 
 if __name__ == "__main__":
