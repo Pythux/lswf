@@ -1,4 +1,6 @@
 
+from tools.pip_my_term import Color
+
 from lswf.database import sql
 
 
@@ -25,7 +27,8 @@ def list_frequently_modify(frequency, limit):
 
 
 def print_table(list_names, data):
-    row_format = "{:>18}  {:<20}"
-    print(row_format.format(*list_names))
+    c = Color.c
+    row_format = "{:>16}    {:<20}"
+    print(row_format.format(*(map(lambda m: c(m, 'OKBLUE'), list_names))))
     for row in data:
         print(row_format.format(*row))
