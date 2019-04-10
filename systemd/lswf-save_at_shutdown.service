@@ -1,0 +1,14 @@
+[Unit]
+Description=lswf, saving data from RAM, called at shutdow
+
+# Conflicts=shutdown.target
+# Before=shutdown.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+User=user_name
+ExecStop=path/to/python -m lswf save
+TimeoutSec=100
+[Install]
+WantedBy=default.target

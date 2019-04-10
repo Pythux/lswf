@@ -1,0 +1,9 @@
+[Unit]
+Description=lswf, saving data from RAM times to times
+
+[Timer]
+OnBootSec=45minutes
+OnUnitActiveSec=45minutes
+
+[Install]
+WantedBy=timers.target

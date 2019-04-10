@@ -1,0 +1,11 @@
+[Unit]
+Description=lswf, loading saved data in RAM
+
+[Service]
+Type=oneshot
+ExecStart=path/to/python -m lswf load
+RemainAfterExit=yes
+# shutdow not leting time on user service to stop
+TimeoutSec=100
+[Install]
+WantedBy=default.target

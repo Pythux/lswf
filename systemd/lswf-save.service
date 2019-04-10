@@ -1,0 +1,10 @@
+[Unit]
+Description=lswf, saving data from RAM, called by lswf-save.timer
+
+[Service]
+Type=simple
+ExecStart=path/to/python -m lswf save
+TimeoutSec=100
+
+# no Install, launched by the .timer of the same name
+# (which will have an Install section)
