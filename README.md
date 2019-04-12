@@ -10,7 +10,7 @@ install all of them:
 * in the cloned project:
 > pip install .
 
-* in the directory that contant the project:
+* in the directory that contant the cloned project:
 > pip install project_name
 
 
@@ -29,6 +29,8 @@ it will put /tmp in RAM, with a maximun of 4 go usable (use only what it need)
 to make changes effectives:
 > sudo mount -a
 
+
+# using lswf:
 
 #### search what could go in RAM:
 > lswf scan
