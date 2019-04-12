@@ -2,8 +2,11 @@
 import os
 from shutil import copy2, copytree, move, rmtree
 
-from lswf.core.init import disk_data, ram_data, sql
-from lswf.database import db, SymLink
+from lswf.core.init import ram_data, disk_dir
+from lswf.database import sql, db, SymLink
+
+
+disk_data = os.path.join(disk_dir, 'src', 'data')
 
 
 def create_needed_symlink():

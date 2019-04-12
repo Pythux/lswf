@@ -1,11 +1,13 @@
 # shebang will automaticaly be set to the pip venv
 import logging
-
+import os
 import patcher
+import tools
 
 from lswf.core.init import ram_dir, disk_dir
 import lswf.core.scan
-import lswf.core.list_frequence
+import lswf.core.show
+import lswf.core.ram
 
 
 def init_parser_scan(parser_scan):
@@ -50,40 +52,45 @@ def app_save(_):
     patcher.save(ram_dir, disk_dir)
 
 
-def init_parser_frequency(parser_frequency):
-    parser_frequency.add_argument(
+def init_parser_show(parser_show):
+    parser_show.add_argument(
         "--frequency",
         help='frequency to begin, default to 4',
         type=int,
         default=0,
         )
-    parser_frequency.add_argument(
+    parser_show.add_argument(
         "--limit",
         help='length limit to show, default to 10',
         type=int,
         default=10,
         )
-    parser_frequency.set_defaults(func=app_list_frequently_modify)
+    parser_show.set_defaults(func=app_show)
 
 
-def app_list_frequently_modify(args):
-    lswf.core.list_frequence.print_frequently_modify_and_in_ram(
+def app_show(args):
+    lswf.core.show.print_frequently_modify_and_in_ram(
         args.frequency, args.limit)
 
 
 def init_parser_ram(parser_ram):
     parser_ram.add_argument(
         "--out",
-        help='the path must be in ram with this programme,'
-        ' this action take it out of it',
-        nargs='?',
+        help='put the path out of RAM',
+        action='store_const',
         const=True, default=False
         )
+    parser_ram.add_argument('path', metavar='PATH', nargs=1,
+                            help='path to put in ram (file/directory)')
     parser_ram.set_defaults(func=app_ram)
 
 
-def app_ram(_):
-    pass
+def app_ram(args):
+    abs_path = tools.path.to_absolute_path(args.path[0])
+    if args.out:
+        lswf.core.ram.out_path_from_ram(abs_path)
+    else:
+        lswf.core.ram.add_path_to_ram(abs_path)
 
 
 def main():
@@ -108,7 +115,7 @@ def main():
     init_parser_scan(subparsers.add_parser('scan', help=doc_scan))
     init_parser_load(subparsers.add_parser('load', help=doc_load))
     init_parser_save(subparsers.add_parser('save', help=doc_save))
-    init_parser_frequency(subparsers.add_parser('show', help=doc_show))
+    init_parser_show(subparsers.add_parser('show', help=doc_show))
     init_parser_ram(subparsers.add_parser('ram', help=doc_ram))
 
     args = parser.parse_args()

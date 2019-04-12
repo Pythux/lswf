@@ -1,6 +1,6 @@
 import os
 from tools.pip_my_term import Color
-from tools.path import get_size
+import tools.path.size
 
 from lswf.database import sql
 
@@ -55,8 +55,20 @@ def print_frequently_modify_and_in_ram(frequency, limit):
         map(lambda t: (t[0][0], t[0][1], t[1]), path_already_in_ram))
 
     print('\n\n')
+    total_size = 0
+
+    def get_and_store_size(path):
+        nonlocal total_size
+        size = tools.path.size.get_size(path, human_readable=False)
+        total_size += size
+        return tools.path.size.convert_to_human(size)
+
     print_table(('            size', 'path in RAM'),
-                map(lambda path: (get_size(path), path), li_symlink))
+                map(lambda path: (get_and_store_size(path), path), li_symlink))
+
+    c = Color.c
+    print('\n{} {}'.format(c('  Total:', 'BOLD', 'WARNING'),
+                           tools.path.size.convert_to_human(total_size)))
 
 
 def print_table(col_names, data):
