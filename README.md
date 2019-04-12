@@ -20,8 +20,8 @@ to make changes effectives:
 #### search what could go in RAM:
 > lswf scan
 
-#### find frequently modify:
-> lswf list_frequently_modify
+#### show frequently modified and already in RAM:
+> lswf show
 
 #### put file or directory in RAM:
 > lswf ram <path>

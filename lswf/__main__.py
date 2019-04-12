@@ -43,7 +43,7 @@ def app_load(_):
 
 
 def init_parser_save(parser_save):
-    parser_save.set_defaults(func=app_list_frequently_modify)
+    parser_save.set_defaults(func=app_save)
 
 
 def app_save(_):
@@ -51,12 +51,12 @@ def app_save(_):
 
 
 def init_parser_frequency(parser_frequency):
-    # parser_frequency.add_argument(
-    #     "--frequency",
-    #     help='frequency to begin, default to 4',
-    #     type=int,
-    #     default=4,
-    #     )
+    parser_frequency.add_argument(
+        "--frequency",
+        help='frequency to begin, default to 4',
+        type=int,
+        default=0,
+        )
     parser_frequency.add_argument(
         "--limit",
         help='length limit to show, default to 10',
@@ -67,7 +67,8 @@ def init_parser_frequency(parser_frequency):
 
 
 def app_list_frequently_modify(args):
-    lswf.core.list_frequence.list_frequently_modify(0, args.limit)
+    lswf.core.list_frequence.print_frequently_modify_and_in_ram(
+        args.frequency, args.limit)
 
 
 def init_parser_ram(parser_ram):
@@ -96,6 +97,8 @@ def main():
     """
     doc_save = """save data in RAM with patcher (making diff)"""
     doc_load = """load data from store to RAM with patcher"""
+    doc_show = "show frequently modified and already in RAM"
+    doc_ram = "put file/directory in/out of RAM"
     import argparse
     parser = argparse.ArgumentParser(
         description=doc, formatter_class=argparse.RawTextHelpFormatter)
@@ -105,8 +108,8 @@ def main():
     init_parser_scan(subparsers.add_parser('scan', help=doc_scan))
     init_parser_load(subparsers.add_parser('load', help=doc_load))
     init_parser_save(subparsers.add_parser('save', help=doc_save))
-    init_parser_frequency(subparsers.add_parser('list_frequently_modify', help=''))
-    init_parser_ram(subparsers.add_parser('ram', help=''))
+    init_parser_frequency(subparsers.add_parser('show', help=doc_show))
+    init_parser_ram(subparsers.add_parser('ram', help=doc_ram))
 
     args = parser.parse_args()
     if hasattr(args, 'func'):
