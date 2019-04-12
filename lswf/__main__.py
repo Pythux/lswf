@@ -1,6 +1,5 @@
 # shebang will automaticaly be set to the pip venv
 import logging
-import os
 import patcher
 import tools
 

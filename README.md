@@ -1,7 +1,20 @@
 
 # installing:
 
+clone this directory and:
+ - patcher
+ - py_tools
+ - py_CRUD_vanilla
 
+install all of them:  
+* in the cloned project:
+> pip install .
+
+* in the directory that contant the project:
+> pip install project_name
+
+
+--> [follow installing instruction of systemd](https://github.com/Pythux/lswf/tree/master/systemd)
 
 
 ## /tmp in ram:
