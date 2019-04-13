@@ -32,7 +32,7 @@ to make changes effectives:
 
 # using lswf:
 
-#### search what could go in RAM:
+#### scan all filesystem, useful to know what is frequently modified:
 > lswf scan
 
 #### show frequently modified and already in RAM:

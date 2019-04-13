@@ -45,7 +45,7 @@ def delete_symlink(symlink):
             else:
                 os.unlink(to_delete)
         else:
-            SystemError(
+            raise SystemError(
                 'delete_symlink: path should be ' +
                 'a symlink, please, check path: {}'
                 .format(symlink.path)
