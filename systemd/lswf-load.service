@@ -1,11 +1,15 @@
 [Unit]
 Description=lswf, loading saved data in RAM
+DefaultDependencies=no
+After=sysinit.target local-fs.target
+Before=basic.target
 
 [Service]
 Type=oneshot
-ExecStart=path/to/python -m lswf load
 RemainAfterExit=yes
+ExecStart=path/to/python -m lswf load
+User=user_name
 # shutdow not leting time on user service to stop
 TimeoutSec=100
 [Install]
-WantedBy=default.target
+WantedBy=basic.target

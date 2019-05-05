@@ -11,10 +11,10 @@ cd systemd_to_install
 
 #### copying all the services:
 ```
-cp lswf-load.service ~/.config/systemd/user/
 cp lswf-save.service ~/.config/systemd/user/
 cp lswf-save.timer ~/.config/systemd/user/
 
+sudo cp lswf-load.service /etc/systemd/system
 sudo cp lswf-save_at_shutdown.service /etc/systemd/system
 ```
 
@@ -23,9 +23,9 @@ you could now delete the directory "systemd_to_install"
 
 #### enabling all the services:
 ```
-systemctl enable --user lswf-load.service
 systemctl enable --user lswf-save.timer
 
+systemctl enable lswf-load.service
 systemctl enable lswf-save_at_shutdown.service
 ```
 
@@ -33,7 +33,8 @@ systemctl enable lswf-save_at_shutdown.service
 
 if you want to use the service now:
 ```
-systemctl --user start lswf-load.service
 systemctl --user start lswf-save.timer
+
+systemctl start lswf-load.service
 systemctl start lswf-save_at_shutdown.service
 ```

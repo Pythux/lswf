@@ -95,7 +95,8 @@ def try_scan(path, const_var):
 def main(path, timeout, sleep_ratio, avoid_paths):
     init_if_needed()
     change_since = 1  # in minutes
-    avoid_paths += ['/sys', '/proc', '/tmp', '/run', '/dev', '/timeshift']
+    avoid_paths += ['/sys', '/proc', '/tmp', '/run', '/dev', '/timeshift',
+                    '/2To']
     scan_number = 0
     weel_e_wonka = WeelEWonka()
 

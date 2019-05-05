@@ -2,9 +2,11 @@
 import logging
 import patcher
 import tools
+from datetime import timedelta
 
 from lswf.core.init import ram_dir, disk_dir
 import lswf.core.scan
+import lswf.core.clean_scan
 import lswf.core.show
 import lswf.core.ram
 
@@ -33,6 +35,20 @@ def app_scan(args):
     timeout, sleep_ratio = mode[args.speed]
     avoid_paths = []
     lswf.core.scan.main(args.path, timeout, sleep_ratio, avoid_paths)
+
+
+def init_parser_clean(parser_clean):
+    parser_clean.add_argument(
+        "--hours",
+        help='clean scanned data since X hours',
+        type=int,
+        default=1
+        )
+    parser_clean.set_defaults(func=app_clean)
+
+
+def app_clean(args):
+    lswf.core.clean_scan.del_older_than(timedelta(hours=args.hours))
 
 
 def init_parser_load(parser_load):
@@ -112,6 +128,7 @@ def main():
     subparsers = parser.add_subparsers()
 
     init_parser_scan(subparsers.add_parser('scan', help=doc_scan))
+    init_parser_clean(subparsers.add_parser('clean', help="clean old scan"))
     init_parser_load(subparsers.add_parser('load', help=doc_load))
     init_parser_save(subparsers.add_parser('save', help=doc_save))
     init_parser_show(subparsers.add_parser('show', help=doc_show))
