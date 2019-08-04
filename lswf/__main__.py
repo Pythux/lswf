@@ -4,6 +4,8 @@ import patcher
 import tools
 from datetime import timedelta
 
+import argparse
+
 from lswf.core.init import ram_dir, disk_dir
 import lswf.core.scan
 import lswf.core.clean_scan
@@ -121,7 +123,6 @@ def main():
     doc_load = """load data from store to RAM with patcher"""
     doc_show = "show frequently modified and already in RAM"
     doc_ram = "put file/directory in/out of RAM"
-    import argparse
     parser = argparse.ArgumentParser(
         description=doc, formatter_class=argparse.RawTextHelpFormatter)
 

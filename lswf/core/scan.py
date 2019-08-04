@@ -58,12 +58,12 @@ def full_scan(path, const_var):
 
     weel_e_wonka.msg(path)
 
-    start = time.time()
-
     too_big = TooBig(path)
     if db.read(too_big):
         in_too_big(too_big, const_var)
+        start = time.time()
     else:
+        start = time.time()
         try_scan(path, const_var)
 
     stop = time.time()
