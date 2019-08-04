@@ -44,7 +44,7 @@ def init_parser_clean(parser_clean):
         "--hours",
         help='clean scanned data since X hours',
         type=int,
-        default=1
+        default=0
         )
     parser_clean.set_defaults(func=app_clean)
 
