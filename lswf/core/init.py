@@ -70,7 +70,7 @@ if hasattr(sys, '_called_from_test'):
 
 
 def sql(req, *params):
-    return sql_sqlite(os.path.join(disk_dir, db_name), req, *params)
+    return sql_sqlite(os.path.join(path_config_dir, db_name), req, *params)
 
 
 def create_tables():
@@ -82,16 +82,20 @@ def create_tables():
 def try_create_table():
     is_table_exist = sql(
         "SELECT name FROM sqlite_master" +
-        " WHERE type='table' AND name='directory';")
+        " WHERE type='table' AND name='too_big_directory';")
     if is_table_exist == []:
         create_tables()
 
 
+def create_dir_if_not_exist(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+
 def init_if_needed():
-    if not os.path.isdir(disk_dir):
-        try_create_table()
-    if not os.path.exists(ram_dir):
-        os.makedirs(ram_dir)
+    create_dir_if_not_exist(disk_dir)
+    create_dir_if_not_exist(ram_dir)
+    try_create_table()
 
 
 if __name__ == "__main__":
