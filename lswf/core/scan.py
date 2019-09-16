@@ -46,8 +46,8 @@ def fn_both(o):
     update_change(o)
 
 
-def scan(path, timeout, change_since_mn):
-    scan_file_dir(path, timeout, change_since_mn, fn_file, fn_dir)
+def scan(path, timeout, change_since_mn, avoid_paths):
+    scan_file_dir(path, timeout, change_since_mn, fn_file, fn_dir, avoid_paths)
 
 
 def full_scan(path, const_var):
@@ -80,12 +80,12 @@ def in_too_big(too_big, const_var):
 
 
 def try_scan(path, const_var):
-    _, timeout, *_, change_since = const_var
+    _, timeout, _, avoid_paths, change_since = const_var
     if os.path.isfile(path):
         fn_file(path)
     else:
         try:
-            scan(path, timeout, change_since)
+            scan(path, timeout, change_since, avoid_paths)
         except TimeoutExpired:
             print('the path: “{}” is too big, split it'.format(path))
             db.create(TooBig(path))

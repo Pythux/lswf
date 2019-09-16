@@ -4,14 +4,15 @@ import patcher
 from tools.json import json_update
 from tools.path import to_absolute_path
 from datetime import timedelta
-
+from os.path import join as pj
 import argparse
 
-from lswf.core.init import ram_dir, disk_dir, path_config_json, conf
+from lswf.core.init import ram_dir, disk_dir, path_config_json, conf, path_config, init_if_needed
 import lswf.core.scan
 import lswf.core.clean_scan
 import lswf.core.show
 import lswf.core.ram
+from lswf.database import SymLink, sql
 
 
 def init_parser_scan(parser_scan):
@@ -39,7 +40,7 @@ def app_scan(args):
     }
     timeout, sleep_ratio = mode[args.speed]
     avoid_paths = list(map(to_absolute_path, conf['scan_path-to-avoid']))
-    lswf.core.scan.main(args.path, timeout, sleep_ratio, avoid_paths)
+    lswf.core.scan.main(args.path, timeout, sleep_ratio, avoid_paths + [path_config])
 
 
 def init_parser_add_avoid_path(parser_add_avoid_path):
@@ -73,7 +74,10 @@ def init_parser_load(parser_load):
 
 
 def app_load(_):
-    patcher.load(disk_dir, ram_dir)
+    li_symlink = SymLink.from_select_stars(sql('select * from symlink'))
+    for symlink in li_symlink:
+        patcher.load(pj(disk_dir, symlink.symlink_to), pj(ram_dir, symlink.symlink_to),
+                     save_mode=symlink.save_mode)
 
 
 def init_parser_save(parser_save):
@@ -83,13 +87,11 @@ def init_parser_save(parser_save):
 def app_save(_):
     # symlink: 1	/home/pythux/.config/chromium/Default	"Default 1"
     # add a mode, tar, tar.gz ..., or file by file in the symlinked dir/file
-    li_symlink_to_save = SymLink.from_select_stars(sql_disk(
-        'select * from symlink'
-    ))
-    import IPython
-    IPython.embed()
+    li_symlink = SymLink.from_select_stars(sql('select * from symlink'))
 
-    # patcher.save(ram_dir, disk_dir)
+    for symlink in li_symlink:
+        patcher.save(pj(ram_dir, symlink.symlink_to), pj(disk_dir, symlink.symlink_to),
+                     save_mode=symlink.save_mode)
 
 
 def init_parser_show(parser_show):
@@ -126,7 +128,7 @@ def init_parser_ram(parser_ram):
 
 
 def app_ram(args):
-    abs_path = tools.path.to_absolute_path(args.path[0])
+    abs_path = to_absolute_path(args.path[0])
     if args.out:
         lswf.core.ram.out_path_from_ram(abs_path)
     else:
@@ -134,6 +136,7 @@ def app_ram(args):
 
 
 def main():
+    init_if_needed()
     logging.basicConfig(level=logging.DEBUG)
     doc = """
         manage scan, caching in ram with symlink,

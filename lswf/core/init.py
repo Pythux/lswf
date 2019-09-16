@@ -12,19 +12,20 @@ from .tables import tables
 test_disk_dir = '/tmp/test_lswf/on_disk'
 test_ram_dir = '/tmp/test_lswf/on_ram'
 
-path_config_dir = to_absolute_path("~/.config/lswf")
-path_config_json = os.path.join(path_config_dir, 'config.json')
+path_config = to_absolute_path("~/.config/lswf")
+path_config_json = os.path.join(path_config, 'config.json')
 db_name = "lswf.db"
+path_db = os.path.join(path_config, db_name)
 
 
 def create_config_if_needed():
     base_conf = {
-        "ram_directory": "/tmp/lower_ssd_write_frequency (inProgress)",
+        "ram_directory": "/tmp/lswf",
         "data_store_on_disk": "~/.config/lswf/data",
-        "scan_path-to-avoid": ['/sys', '/proc', '/tmp', '/run', '/dev', '/timeshift'],
+        "scan_path-to-avoid": ['/sys', '/usr', '/proc', '/tmp', '/run', '/dev', '/timeshift'],
     }
-    if not os.path.isdir(path_config_dir):
-        os.makedirs(path_config_dir)
+    if not os.path.isdir(path_config):
+        os.makedirs(path_config)
         with open(path_config_json, 'w') as file:
             json.dump(base_conf, file, sort_keys=True, indent=4)
 
@@ -70,7 +71,7 @@ if hasattr(sys, '_called_from_test'):
 
 
 def sql(req, *params):
-    return sql_sqlite(os.path.join(path_config_dir, db_name), req, *params)
+    return sql_sqlite(path_db, req, *params)
 
 
 def create_tables():
