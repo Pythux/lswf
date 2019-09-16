@@ -2,7 +2,7 @@
 import os
 from shutil import copy2, copytree, move, rmtree
 
-from lswf.core.init import ram_data, disk_dir
+from lswf.core.init import ram_dir, disk_dir
 from lswf.database import sql, db, SymLink
 
 
@@ -22,7 +22,7 @@ def create_needed_symlink():
 
 def move_to_disk_and_copy_to_ram(symlink):
     path_on_disk = os.path.join(disk_data, symlink.symlink_to)
-    path_on_ram = os.path.join(ram_data, symlink.symlink_to)
+    path_on_ram = os.path.join(ram_dir, symlink.symlink_to)
 
     move(symlink.path, path_on_disk)
     if symlink.is_dir:
@@ -38,7 +38,7 @@ def delete_symlink(symlink):
     if symlink.symlink_to is not None:
         if os.path.islink(symlink.path):
             os.unlink(symlink.path)
-            move(os.path.join(ram_data, symlink.symlink_to), symlink.path)
+            move(os.path.join(ram_dir, symlink.symlink_to), symlink.path)
             to_delete = os.path.join(disk_data, symlink.symlink_to)
             if symlink.is_dir:
                 rmtree(to_delete)

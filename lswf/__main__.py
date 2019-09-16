@@ -1,12 +1,13 @@
 # shebang will automaticaly be set to the pip venv
 import logging
 import patcher
-import tools
+from tools.json import json_update
+from tools.path import to_absolute_path
 from datetime import timedelta
 
 import argparse
 
-from lswf.core.init import ram_dir, disk_dir
+from lswf.core.init import ram_dir, disk_dir, path_config_json, conf
 import lswf.core.scan
 import lswf.core.clean_scan
 import lswf.core.show
@@ -25,6 +26,8 @@ def init_parser_scan(parser_scan):
         help='fast, medium, slow',
         default='medium',
         )
+    subparsers = parser_scan.add_subparsers()
+    init_parser_add_avoid_path(subparsers.add_parser('add-path-to-avoid'))
     parser_scan.set_defaults(func=app_scan)
 
 
@@ -35,8 +38,20 @@ def app_scan(args):
         'slow': [2, 8],
     }
     timeout, sleep_ratio = mode[args.speed]
-    avoid_paths = []
+    avoid_paths = list(map(to_absolute_path, conf['scan_path-to-avoid']))
     lswf.core.scan.main(args.path, timeout, sleep_ratio, avoid_paths)
+
+
+def init_parser_add_avoid_path(parser_add_avoid_path):
+    parser_add_avoid_path.add_argument('path', metavar='PATH',
+                                       help='path to avoid from scan, HOME: "~"')
+    parser_add_avoid_path.set_defaults(func=app_add_avoid_path)
+
+
+def app_add_avoid_path(args):
+    key = "scan_path-to-avoid"
+    json_update(path_config_json, key, conf[key] + [args.path])
+    print('added path to avoid during scanning: "{}"'.format(args.path))
 
 
 def init_parser_clean(parser_clean):
@@ -58,7 +73,7 @@ def init_parser_load(parser_load):
 
 
 def app_load(_):
-    patcher.load(ram_dir, disk_dir)
+    patcher.load(disk_dir, ram_dir)
 
 
 def init_parser_save(parser_save):
@@ -66,7 +81,15 @@ def init_parser_save(parser_save):
 
 
 def app_save(_):
-    patcher.save(ram_dir, disk_dir)
+    # symlink: 1	/home/pythux/.config/chromium/Default	"Default 1"
+    # add a mode, tar, tar.gz ..., or file by file in the symlinked dir/file
+    li_symlink_to_save = SymLink.from_select_stars(sql_disk(
+        'select * from symlink'
+    ))
+    import IPython
+    IPython.embed()
+
+    # patcher.save(ram_dir, disk_dir)
 
 
 def init_parser_show(parser_show):

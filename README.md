@@ -7,9 +7,6 @@ clone this directory and:
  - py_CRUD_vanilla
 
 install all of them:  
-* in the cloned project:
-> pip install .
-
 * in the directory that contant the cloned project:
 > pip install project_name
 
@@ -19,8 +16,8 @@ install all of them:
 
 ## /tmp in ram:
 
-put something in RAM:
-in /etc/fstab
+to put /tmp in RAM:
+in file /etc/fstab
 if not "tmpfs /tmp" exist, add:
 > tmpfs   /tmp    tmpfs   defaults,size=4g        0       0
 
@@ -31,6 +28,11 @@ to make changes effectives:
 
 
 # using lswf:
+
+#### before scanning the filesysem, you could add path to avoid from the scan:
+> lswf scan add-path-to-avoid "~/will/not/be/scanned"
+
+this will avoid the folder in your HOME/will/not/be/scanned
 
 #### scan all filesystem, useful to know what is frequently modified:
 > lswf scan
