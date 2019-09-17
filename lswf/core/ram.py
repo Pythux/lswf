@@ -8,6 +8,7 @@ def add_path_to_ram(path):
     if db.read(symlink):
         print('path: “{}” already in RAM'.format(path))
     else:
+        symlink.save_mode = 'overide file by file'
         db.create(symlink)
         create_needed_symlink()
 
