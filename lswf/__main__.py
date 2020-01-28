@@ -85,8 +85,6 @@ def init_parser_save(parser_save):
 
 
 def app_save(_):
-    # symlink: 1	/home/pythux/.config/chromium/Default	"Default 1"
-    # add a mode, tar, tar.gz ..., or file by file in the symlinked dir/file
     li_symlink = SymLink.from_select_stars(sql('select * from symlink'))
 
     for symlink in li_symlink:
