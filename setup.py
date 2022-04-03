@@ -7,15 +7,20 @@ setup(
     author='Pythux',
     # author_email='',
     packages=['lswf'],  # same as name
-    # install_requires=[],  # external packages as dependencies
+    install_requires=[
+        'jsonschema',
+        'crud-vanilla @ git+https://github.com/Pythux/py_CRUD_vanilla.git',
+        'tools @ git+https://github.com/Pythux/py_tools.git',
+        'patcher @ git+https://github.com/Pythux/patcher.git',
+    ],  # external packages as dependencies
     # scripts=[
     #     'lswf/app',
     #     ]
     entry_points={
-          'console_scripts': [
-              'lswf = lswf.__main__:main'
-          ]
-      },
+        'console_scripts': [
+            'lswf = lswf.__main__:main'
+        ]
+    },
 )
 
 # install in dev mode (link to the current folder)

@@ -1,20 +1,14 @@
 
-# installing:
+# installing
 
-clone this directory and:
- - patcher
- - py_tools
- - py_CRUD_vanilla
-
-install all of them:  
-* in the directory that contant the cloned project:
-> pip install project_name
+in this directory:
+> pip install .
 
 
 --> [follow installing instruction of systemd](https://github.com/Pythux/lswf/tree/master/systemd)
 
 
-## /tmp in ram:
+## /tmp in ram
 
 to put /tmp in RAM:
 in file /etc/fstab
@@ -27,7 +21,7 @@ to make changes effectives:
 > sudo mount -a
 
 
-# using lswf:
+# using lswf
 
 #### before scanning the filesysem, you could add path to avoid from the scan:
 > lswf scan add-path-to-avoid "~/will/not/be/scanned"
