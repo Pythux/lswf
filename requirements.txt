@@ -1,5 +1,0 @@
-jsonschema
-
-git+https://github.com/Pythux/py_CRUD_vanilla.git
-git+https://github.com/Pythux/py_tools.git
-git+https://github.com/Pythux/patcher.git
