@@ -6,7 +6,13 @@ setup(
     description='lower ssd write frequency',
     author='Pythux',
     # author_email='',
-    packages=['lswf'],  # same as name
+    packages=[
+        'lswf',
+        'lswf.core',
+        'lswf.data_access',
+        'lswf.lib',
+        'lswf.models',
+    ],  # same as name
     install_requires=[
         'jsonschema',
         'crud-vanilla @ git+https://github.com/Pythux/py_CRUD_vanilla.git',
